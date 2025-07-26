@@ -219,9 +219,15 @@ export async function POST(request: Request) {
       return new Response(stream.pipeThrough(new JsonToSseTransformStream()));
     }
   } catch (error) {
+    // Return a fallback response for unknown errors
+    console.error('API /chat error:', error);
+
     if (error instanceof ChatSDKError) {
       return error.toResponse();
     }
+
+    // Receive a response instead of blank message 
+    return new Response('Internal Server Error', { status: 500 });
   }
 }
 
